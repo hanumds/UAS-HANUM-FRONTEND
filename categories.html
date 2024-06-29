@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body >
+    <nav class="relative px-4 py-4 flex justify-between items-center bg-white shadow-md">
+        <a class="text-3xl font-bold leading-none" href="#">
+          <img class="h-20 w-30" alt="logo" src="img/logo2.png">
+      </a>
+        <div class="lg:hidden">
+            <button class="navbar-burger flex items-center text-blue-600 p-3">
+                <svg class="block h-4 w-4 fill-current" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <title>Mobile menu</title>
+                    <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"></path>
+                </svg>
+            </button>
+        </div>
+        <ul class="hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 lg:flex lg:mx-auto lg:flex lg:items-center lg:w-auto lg:space-x-6">
+            <li><a class="text-sm text-gray-800 hover:text-gray-500" href="#" onclick="makeBold(event)">Home</a></li>
+            <li class="text-gray-300">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" class="w-4 h-4 current-fill" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v0m0 7v0m0 7v0m0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                </svg>
+            </li>
+            <li><a class="text-sm text-gray-800 hover:text-gray-500" href="admin.html" onclick="makeBold(event)">Product</a></li>
+            <li class="text-gray-300">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" class="w-4 h-4 current-fill" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v0m0 7v0m0 7v0m0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                </svg>
+            </li>
+            <li><a class="text-sm text-gray-800 hover:text-gray-500" href="categories.html" onclick="makeBold(event)">Category</a></li>
+            <li class="text-gray-300">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" class="w-4 h-4 current-fill" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v0m0 7v0m0 7v0m0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                </svg>
+            </li>
+      
+           
+        </ul>
+       
+    </nav>
+
+    <div class="container mx-auto px-2 py-8">
+        <div class="w-full">
+            <div class="
+            px-5
+            py-2
+            space-y-2">
+            <h6 class="text-left">Category name</h6>
+                <input type="text" placeholder="Name of categories" id="name"  class="w-1/2 border border-gray-200 rounded-lg px-5 py-2">
+                <button type="button" onclick="SaveCategories()" id="save"  class="bg-gray-700 text-white  px-8 py-2 rounded hover:bg-gray-600 ">Save</button>
+            </div>
+    
+            <div class="overflow-x-auto px-8 py-8">
+                <header class="px-5 py-4  bg-gray-200 rounded-lg p-1 mb-4">
+                    <h2 class="font-semibold text-gray-800 ">Category.</h2>
+                </header>
+                
+                <table class="w-full   bg-white shadow-md rounded-xs">
+                    <thead >
+                        <tr class="bg-gray-100 text-gray-800 shadow-md">
+                            <th class="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 text-center">No.</th>
+                            <th class="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 text-center">Name Category</th>
+                            <th class="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="result" class="bg-white dark:bg-gray-800">
+                        <tr>
+                            <td class="border-y  border-gray-300 p-4 text-center">1</td>
+                            <td class="border-y  border-gray-300 p-4 text-center">Makanan</td>
+                            <td class="border-y  border-gray-300 p-4 text-center">
+                                <button type="button" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" onclick="DeleteCategories(1)">Delete</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        const GetCategories = async () => {
+            await axios.get('http://localhost:3000/categories')
+                .then((response) => {
+                    console.log(response.data);
+                    const category = response.data;
+                    let bucket = '';
+                    category.forEach((categories, index) => {
+                        bucket += `
+                            <tr>
+                                <td class="p-4 border-b text-center">${index + 1}</td>
+                                <td class="p-4 border-b text-center">${categories.name}</td>
+                                <td class="p-4 flex justify-center space-x-2">
+                                    <button type="button" class="bg-yellow-400 hover:bg-yellow-500 text-white px-2 py-1 rounded text-sm px-5 py-2.5 mb-2" onclick="EditCategories('${categories.id}')">Edit</button>
+                                    <button type="button" class="bg-red-700 hover:bg-red-800  text-white px-2 py-1 rounded text-sm px-5 py-2.5 mb-2" onclick="DeleteCategories('${categories.id}')">Delete</button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    document.getElementById('result').innerHTML = bucket;
+                })
+                .catch((error) => {
+                    alert(error.message);
+                })
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            GetCategories();
+        });
+
+        const SaveCategories = async () => {
+            let name = document.getElementById('name').value;
+            await axios.post('http://localhost:3000/categories', {
+                name: name,
+            })
+            .then((response) => {
+                console.log(response);
+                GetCategories();
+            })
+            .catch((error) => {
+                alert(error.message);
+            })
+        }
+        const DeleteCategories = async (id) => {
+            const confirmVal = confirm('Apakah data akan dihapus?');
+            if (confirmVal) {
+                await axios.delete(`http://localhost:3000/categories/${id}`)
+                .then((response) => {
+                    console.log(response);
+                    GetCategories();
+                })
+                .catch((error) => {
+                    alert(error.message);
+                })
+            }
+        }
+
+        const EditCategories = async (id) => {
+            await axios.get(`http://localhost:3000/categories/${id}`)
+            .then((response) => {
+                const categories = response.data;
+                document.getElementById("name").value = categories.name;
+                document.getElementById("save").innerText = "Update";
+                document.getElementById("save").setAttribute('onclick', `UpdateCategories('${id}')`);
+                console.log(response);
+            })
+            .catch((error) => {
+                alert(error.message);
+            })
+        }
+        const UpdateCategories = async (id) => {
+            let name = document.getElementById('name').value;
+            await axios.patch(`http://localhost:3000/categories/${id}`, {
+                name: name,
+            })
+            .then((response) => {
+                console.log(response);
+                document.getElementById("name").value = "";
+                document.getElementById("save").innerText = "Save";
+                document.getElementById("save").setAttribute('onclick', `SaveCategories()`);
+                GetCategories();
+            })
+            .catch((error) => {
+                alert(error.message);
+            })
+        }
+
+        // Navbar toggle functionality
+        function toggleMenu() {
+            let navbar = document.getElementById('navbar-hamburger');
+            navbar.classList.toggle('hidden');
+        }
+
+        document.getElementById('menu-toggle').addEventListener('click', function(event) {
+            event.stopPropagation();
+            toggleMenu();
+        });
+
+        document.addEventListener('click', function(event) {
+            let navbar = document.getElementById('navbar-hamburger');
+            if (!navbar.classList.contains('hidden') && !navbar.contains(event.target)) {
+                navbar.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

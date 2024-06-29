@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant</title>
+    <link href="./output.css" rel="stylesheet">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 5px 0;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            font-family: Arial, sans-serif;
+        }
+        .category-makanan {
+            background-color: rgba(255, 140, 0, 0.355);
+            color: white;
+        }
+        .category-minuman {
+            background-color: rgba(0, 128, 255, 0.376);
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <header class="bg-gray-200 py-2">
+        <div class="container mx-auto text-center">
+            <img src="/img/logo-lp3i.png" alt="Politeknik LP3I Kampus Tasikmalaya" class="mx-auto mb-4 w-40 h-auto">
+        </div>
+    </header>
+    
+    <main class="container mx-auto mt-8">
+        <div class="space-y-5">
+            <h2 class="font-bold text-4xl text-center">
+                <span class="text-gray-900">Menu Restoran</span>
+            </h2>
+            <p class="text-xs text-gray-600 text-center mb-8">
+                Berikut ini adalah beberapa menu yang tersedia:
+            </p>
+            <br><br>
+            <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pt-5">
+                <!-- Produk akan dimuat di sini oleh JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer text-white">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2023 Materi Kuliah Front End Development by kangierlan | Politeknik LP3I Kampus Tasikmalaya</p>
+        </div>
+    </footer>
+
+    <script>
+        let products = [];
+        let categories = [];
+
+        const fetchProducts = async () => {
+            try {
+                const productResponse = await axios.get('http://localhost:3000/products');
+                products = productResponse.data;
+                displayProducts();
+            } catch (error) {
+                console.error('Error fetching products:', error);
+            }
+        };
+
+        const fetchCategories = async () => {
+            try {
+                const categoryResponse = await axios.get('http://localhost:3000/categories');
+                categories = categoryResponse.data;
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        };
+
+        const displayProducts = () => {
+            let productList = '';
+            products.forEach(product => {
+                const category = categories.find(cat => cat.id === product.category);
+                const categoryName = category?.name || 'Unknown';
+                const imageSrc = product.image.startsWith('data:image/') ? product.image : 'data:image/png;base64,' + product.image;
+
+                const categoryClass = categoryName.toLowerCase() === 'makanan' ? 'category-makanan' : 
+                                      categoryName.toLowerCase() === 'minuman' ? 'category-minuman' : '';
+
+                productList += `
+                    <div class="bg-gray-100 p-4 rounded-lg shadow-lg border-gray-400 ">
+                        <div class="justify-center items-center h-40">
+                            <img src="${imageSrc}" alt="${product.name}" class="h-full w-full object-cover mb-4 rounded-lg">
+                        </div>
+                        <br>
+                        <br>
+                        <div>
+                            <h2 class="text-lg font-bold">${product.name}</h2>
+                            <p class="text-gray-600 mb-4">${product.description}</p>
+                            <span class="inline-block px-2 py-1 rounded-full text-sm mb-2 ${categoryClass}">${categoryName}</span>
+                            <p class="text-lg font-semibold text-gray-800">Rp ${product.price}</p>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('product-list').innerHTML = productList;
+        };
+
+        const init = async () => {
+            await fetchCategories();
+            await fetchProducts();
+        };
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
